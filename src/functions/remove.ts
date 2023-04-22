@@ -1,14 +1,41 @@
 /* eslint-disable import/prefer-default-export */
 
-import { Overrides } from '@ethersproject/contracts';
+import { ContractTransaction, Overrides } from '@ethersproject/contracts';
 import { JsonRpcProvider } from '@ethersproject/providers';
-import { getStrategyContract } from '../contracts';
+import { BigNumber } from 'ethers';
+import { getERC20Contract, getStrategyContract } from '../contracts';
 import parseBigInt from '../utils/parseBigInt';
 import { getStrategyInfo } from './strategy';
 import { SupportedChainId } from '../types';
 import calculateGasMargin from '../types/calculateGasMargin';
+import formatBigInt from '../utils/formatBigInt';
 
-export default async function removeLP(
+export async function getUserDeshareBalance(
+  accountAddress: string,
+  strategyAddress: string,
+  jsonProvider: JsonRpcProvider,
+): Promise<string>;
+
+export async function getUserDeshareBalance(
+  accountAddress: string,
+  strategyAddress: string,
+  jsonProvider: JsonRpcProvider,
+  raw: true,
+): Promise<BigNumber>;
+
+export async function getUserDeshareBalance(
+  accountAddress: string,
+  strategyAddress: string,
+  jsonProvider: JsonRpcProvider,
+  raw?: true,
+) {
+  const strategyContract = getERC20Contract(strategyAddress, jsonProvider);
+  const shares = await strategyContract.balanceOf(accountAddress);
+
+  return raw ? shares : formatBigInt(shares, 18);
+}
+
+export async function removeLP(
   accountAddress: string,
   shares: string | number,
   strategyAddress: string,
@@ -16,7 +43,7 @@ export default async function removeLP(
   overrides?: Overrides,
   _amount0Min: string = '0',
   _amount1Min: string = '0',
-) {
+): Promise<ContractTransaction> {
   const { chainId } = jsonProvider.network;
 
   if (!Object.values(SupportedChainId).includes(chainId)) {

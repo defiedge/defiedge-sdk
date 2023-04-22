@@ -6,18 +6,19 @@ import 'dotenv/config';
 import HDWalletProvider from '@truffle/hdwallet-provider';
 import { Web3Provider } from '@ethersproject/providers';
 import { ethers } from 'ethers';
-import { formatEther } from '@ethersproject/units';
 import { SupportedChainId } from '../types';
 import STRATEGY_ABI from '../abis/Strategy.json';
 import {
   removeLP,
   depositLP,
+  getUserDeshareBalance,
   getLiquidityRatio,
   getStrategyMetaData,
   getStrategyInfo,
   isStrategyTokenApproved,
   approveStrategyToken,
 } from '../index';
+import formatBigInt from '../utils/formatBigInt';
 
 const hdWalletProvider = new HDWalletProvider([process.env.PRIVATE_KEY!], 'https://bsc-dataseed1.binance.org', 0, 1);
 
@@ -35,14 +36,36 @@ const amount1 = 0.00000001;
 
 describe('Strategy', () => {
   let share: string;
-  it('Strategy depositLp', async () => {
+
+  it('removeLP:all', async () => {
+    const userShares = await getUserDeshareBalance(account, strategy.address, provider);
+
+    if (+userShares <= 0) return;
+
+    await removeLP(account, userShares, strategy.address, provider)
+      .then((e) => e.wait())
+      .then((a) => {
+        const result: any = a.logs
+          .map((e: any) => {
+            try {
+              return iface.parseLog(e);
+            } catch (error) {
+              return null;
+            }
+          })
+          .find((e: any) => e && e.name === 'Burn')?.args;
+
+        console.log('BURN:', result);
+        expect(formatBigInt(result.share)).toEqual(share);
+      });
+  });
+
+  it('depositLp', async () => {
     const isApproved0 = await isStrategyTokenApproved(account, 0, amount0, strategy.address, provider);
     const isApproved1 = await isStrategyTokenApproved(account, 1, amount1, strategy.address, provider);
 
     let approve0: ethers.ContractTransaction | null = null;
     let approve1: ethers.ContractTransaction | null = null;
-
-    console.log({ isApproved0, isApproved1 });
 
     if (!isApproved0) {
       approve0 = await approveStrategyToken(account, 0, strategy.address, provider, amount0);
@@ -69,13 +92,18 @@ describe('Strategy', () => {
 
     console.log('MINT:', result);
 
-    share = formatEther(result.share);
+    share = formatBigInt(result.share);
   });
 
-  it('Strategy removeLP', async () => {
+  it('getUserDeshareBalance', async () => {
+    const userShares = await getUserDeshareBalance(account, strategy.address, provider);
+
+    expect(userShares).toEqual(share);
+  });
+
+  it('removeLP:deposited', async () => {
     if (!share) return;
 
-    expect(share).toEqual(share);
     await removeLP(account, share, strategy.address, provider)
       .then((e) => e.wait())
       .then((a) => {
@@ -90,11 +118,11 @@ describe('Strategy', () => {
           .find((e: any) => e && e.name === 'Burn')?.args;
 
         console.log('BURN:', result);
-        expect(formatEther(result.share)).toEqual(share);
+        expect(formatBigInt(result.share)).toEqual(share);
       });
   });
 
-  it('LP ratio', async () => {
+  it('getLiquidityRatio', async () => {
     const a = await getLiquidityRatio(strategy.address, provider);
     expect(a).toBeGreaterThanOrEqual(0);
   });
