@@ -1,4 +1,4 @@
-import { Overrides } from '@ethersproject/contracts';
+import { ContractTransaction, Overrides } from '@ethersproject/contracts';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { MaxUint256 } from '@ethersproject/constants';
 import { getERC20Contract, getStrategyContract } from '../contracts';
@@ -14,7 +14,7 @@ export async function isStrategyTokenApproved(
   amount: string | number,
   strategyAddress: string,
   jsonProvider: JsonRpcProvider,
-) {
+): Promise<boolean> {
   const { chainId } = jsonProvider.network;
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId}`);
@@ -40,7 +40,7 @@ export async function approveStrategyToken(
   jsonProvider: JsonRpcProvider,
   amount?: string | number,
   overrides?: Overrides,
-) {
+): Promise<ContractTransaction> {
   const { chainId } = jsonProvider.network;
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId}`);
@@ -70,7 +70,7 @@ export async function depositLP(
   overrides?: Overrides,
   _amount0Min: string = '0',
   _amount1Min: string = '0',
-) {
+): Promise<ContractTransaction> {
   const { chainId } = jsonProvider.network;
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId}`);
