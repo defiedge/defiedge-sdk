@@ -176,7 +176,7 @@ const txnDetails = await depositLP(
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
-import { getLiquidityRatio } from '@defiedge/sdk';
+import { getUserDeshareBalance } from '@defiedge/sdk';
 
 const provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const strategyAddress = "0xc3ad...72bf9eb"
@@ -199,6 +199,7 @@ const deShareBN: BigNumber = await getUserDeshareBalance(
 ```
 
 #### 6. `removeLP()`
+
 | param | type |  default | required
 | -------- | -------- | -------- | --------
 | userAddress   | string | - | true
@@ -206,11 +207,12 @@ const deShareBN: BigNumber = await getUserDeshareBalance(
 | strategyAddress   | string | - | true 
 | jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
 | overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
+
 <br/>
 
 ```typescript
 import { Web3Provider } from '@ethersproject/providers';
-import { removeLP } from '@defiedge/sdk';
+import { removeLP, getUserDeshareBalance } from '@defiedge/sdk';
 
 const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
 const strategyAddress = "0xc3ad...72bf9eb"
@@ -222,40 +224,9 @@ const totalUserShare: string = getUserDeshareBalance(
     web3Provider
 )
 
-let shares = Number(totalUserShare) * 0.5 // 50% of user deshare
+let shares = Number(totalUserShare) * 0.5 // 50% of user deshare balance
 
 const txnDetails = await removeLP(
-    accountAddress,
-    shares, // de shares
-    strategyAddress, 
-    web3Provider
-)
-```
-
-<div id="MetaInfo"></div>
-#### 5. `removeLP()`
-| param | type |  default | required
-| -------- | -------- | -------- | --------
-| userAddress   | string | - | true
-| shares           | string \| number | - | true
-| strategyAddress   | string | - | true 
-| jsonProvider      | [JsonRpcProvider](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/providers/src.ts/json-rpc-provider.ts#L393) | - | true
-| overrides         | [Overrides](https://github.com/ethers-io/ethers.js/blob/f97b92bbb1bde22fcc44100af78d7f31602863ab/packages/contracts/lib/index.d.ts#L7)  | undefined | false
-<br/>
-
-```typescript
-import { Web3Provider } from '@ethersproject/providers';
-import { removeLP } from '@defiedge/sdk';
-
-const web3Provider = new Web3Provider(YOUR_WEB3_PROVIDER);
-const strategyAddress = "0xc3ad...72bf9eb"
-const accountAddress = "0xaaaa...aaaaaa"
-
-const totalUserShare = await erc20Contract(strategyAddress).balanceOf(accountAddress) // DE Shares 
-
-let shares = 0.0001 // DE Shares or percentage of totalUserShare
-
-await removeLP(
     accountAddress,
     shares, // de shares
     strategyAddress, 
