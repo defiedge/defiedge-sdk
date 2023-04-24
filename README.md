@@ -9,14 +9,14 @@ This sdk contains collection of functions to interact with defiedge's smart cont
 * [__Installation__](#Installation)
 * [__Usage__](#Usage)
      * [__Strategy Functions__](#Strategy)
-        * [`isStrategyTokenApproved`](#1-isStrategyTokenApproved)
-        * [`approveStrategyToken`](#2-approveStrategyToken)
-        * [`getLiquidityRatio`](#3-getLiquidityRatio)
-        * [`depositLP`](#4-depositLP)
-        * [`getUserDeshareBalance`](#5-getUserDeshareBalance)
-        * [`removeLP`](#6-removeLP)
+        * [`isStrategyTokenApproved()`](#1-isStrategyTokenApproved)
+        * [`approveStrategyToken()`](#2-approveStrategyToken)
+        * [`getLiquidityRatio()`](#3-getLiquidityRatio)
+        * [`depositLP()`](#4-depositLP)
+        * [`getUserDeshareBalance()`](#5-getUserDeshareBalance)
+        * [`removeLP()`](#6-removeLP)
     * [__Metadata Information__](#MetaInfo)
-        * [___getStrategyMetaData___](#1-getStrategyMetaData)
+        * [`getStrategyMetaData()`](#1-getStrategyMetaData)
 
 
 
