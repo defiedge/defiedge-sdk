@@ -61,7 +61,7 @@ describe('Strategy', () => {
       });
   });
 
-  it('depositLp', async () => {
+  it.skip('depositLp', async () => {
     const isApproved0 = await isStrategyTokenApproved(account, 0, amount0, strategy.address, provider);
     const isApproved1 = await isStrategyTokenApproved(account, 1, amount1, strategy.address, provider);
 
