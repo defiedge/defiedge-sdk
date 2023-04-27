@@ -150,15 +150,39 @@ export async function getStrategyMetaData(
   return await promises[key];
 }
 
-export async function getStrategyInfo(chainId: SupportedChainId, strategyAddress: string): Promise<StrategyQueryData> {
+export async function getStrategyInfo(
+  chainId: SupportedChainId,
+  strategyAddress: string,
+): Promise<StrategyQueryData['strategy']> {
   const key = `${chainId + strategyAddress}-info`;
 
   if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
 
   promises[key] = request<StrategyQueryData, { strategyAddress: string }>(urls[chainId], strategyQuery, {
     strategyAddress,
-  }).finally(() => setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */));
+  })
+    .then(({ strategy }) => strategy)
+    .finally(() => setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */));
 
   // eslint-disable-next-line no-return-await
   return await promises[key];
+}
+
+export async function getStrategyDetails(
+  chainId: SupportedChainId,
+  strategyAddress: string,
+): Promise<StrategyQueryData['strategy'] & StrategyMetaQuery> {
+  const key = `${chainId + strategyAddress}-both`;
+
+  if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
+
+  promises[key] = Promise.all([
+    getStrategyInfo(chainId, strategyAddress),
+    getStrategyMetaData(chainId, strategyAddress),
+  ])
+    .then(([a, b]) => ({ ...a, ...b }))
+    .finally(() => setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */));
+
+  // eslint-disable-next-line no-return-await
+  return promises[key];
 }

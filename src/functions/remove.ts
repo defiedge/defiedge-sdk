@@ -53,7 +53,7 @@ export async function removeLP(
   const signer = jsonProvider.getSigner(accountAddress);
 
   const strategyContract = getStrategyContract(strategyAddress, signer);
-  const { strategy } = await getStrategyInfo(chainId, strategyAddress);
+  const strategy = await getStrategyInfo(chainId, strategyAddress);
 
   const params: Parameters<typeof strategyContract.burn> = [
     parseBigInt(shares, 18),

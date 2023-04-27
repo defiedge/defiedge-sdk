@@ -19,6 +19,7 @@ import {
   approveStrategyToken,
 } from '../index';
 import formatBigInt from '../utils/formatBigInt';
+import { getRanges } from '../functions/getLiquidityRatio';
 
 const hdWalletProvider = new HDWalletProvider([process.env.PRIVATE_KEY!], 'https://bsc-dataseed1.binance.org', 0, 1);
 
@@ -35,7 +36,7 @@ const amount0 = 0;
 const amount1 = 0.00000001;
 
 describe('Strategy', () => {
-  let share: string;
+  let share: string | null = null;
 
   it('removeLP:all', async () => {
     const userShares = await getUserDeshareBalance(account, strategy.address, provider);
@@ -98,7 +99,7 @@ describe('Strategy', () => {
   it('getUserDeshareBalance', async () => {
     const userShares = await getUserDeshareBalance(account, strategy.address, provider);
 
-    expect(userShares).toEqual(share);
+    expect(userShares).toEqual(share || '0');
   });
 
   it('removeLP:deposited', async () => {
@@ -134,5 +135,12 @@ describe('Strategy', () => {
   it('GetStrategyInfo', async () => {
     const a = await getStrategyInfo(strategy.chainId, strategy.address);
     expect(a).toBeTruthy();
+  });
+
+  it('getRanges', async () => {
+    const ranges = await getRanges(strategy.address, provider);
+    console.log({ ranges });
+
+    expect(ranges.length).toBeGreaterThan(0);
   });
 });

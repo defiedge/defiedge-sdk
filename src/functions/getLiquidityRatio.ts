@@ -3,7 +3,8 @@ import { Price, Token } from '@uniswap/sdk-core';
 import JSBI from 'jsbi';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { getStrategyInfo } from './strategy';
-import { getPoolContract } from '../contracts';
+import { getPoolContract, getStrategyContract } from '../contracts';
+import { IStrategyBase } from '../../abis/types/Strategy';
 
 function ratio(p: number, pmin: number, pmax: number) {
   const sqp = Math.sqrt(p);
@@ -30,9 +31,37 @@ async function currentPrice(address: string, provider: JsonRpcProvider, baseToke
   };
 }
 
+export async function getRanges(strategyAddress: string, provider: JsonRpcProvider) {
+  const strategyContract = getStrategyContract(strategyAddress, provider);
+  let orders: IStrategyBase.TickStructOutput[] = [];
+  const { chainId } = provider.network;
+
+  if (!strategyContract) return orders;
+
+  const [_orders, strategy] = await Promise.all([
+    strategyContract.getTicks().catch(() => []),
+    getStrategyInfo(chainId, strategyAddress),
+  ]);
+
+  const tokenA = new Token(chainId, strategy.token0.id, +strategy.token0.decimals, strategy.token0.symbol);
+  const tokenB = new Token(chainId, strategy.token1.id, +strategy.token1.decimals, strategy.token1.symbol);
+
+  orders = _orders;
+
+  if (orders.length === 0) orders = [await strategyContract.ticks(0)];
+
+  return orders.map((range) => ({
+    lowerTickInA: +tickToPrice(tokenA, tokenB, +range.tickLower).toSignificant(6),
+    upperTickInA: +tickToPrice(tokenA, tokenB, +range.tickUpper).toSignificant(6),
+    lowerTickInB: +tickToPrice(tokenB, tokenA, +range.tickUpper).toSignificant(6),
+    upperTickInB: +tickToPrice(tokenB, tokenA, +range.tickLower).toSignificant(6),
+  }));
+}
+
 export default async function getLiquidityRatio(strategyAddress: string, provider: JsonRpcProvider) {
   const { chainId } = provider.network;
-  const { strategy } = await getStrategyInfo(chainId, strategyAddress);
+  const strategy = await getStrategyInfo(chainId, strategyAddress);
+
   const tokenA = new Token(chainId, strategy.token0.id, +strategy.token0.decimals, strategy.token0.symbol);
   const tokenB = new Token(chainId, strategy.token1.id, +strategy.token1.decimals, strategy.token1.symbol);
   const { cp, tick } = await currentPrice(strategy.pool, provider, tokenA, tokenB);
@@ -50,8 +79,6 @@ export default async function getLiquidityRatio(strategyAddress: string, provide
   }
 
   const data = {
-    amount0: range.amount0, // BigNumber
-    amount1: range.amount1, // BigNumber
     lowerBound: +tickToPrice(tokenA, tokenB, +range.tickLower).toSignificant(6), // Number
     upperBound: +tickToPrice(tokenA, tokenB, +range.tickUpper).toSignificant(6), // Number
   };

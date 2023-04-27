@@ -21,7 +21,7 @@ export async function isStrategyTokenApproved(
   }
 
   const signer = jsonProvider.getSigner(accountAddress);
-  const { strategy } = await getStrategyInfo(chainId, strategyAddress);
+  const strategy = await getStrategyInfo(chainId, strategyAddress);
 
   const token = strategy[tokenIdx === 0 ? 'token0' : 'token1'];
 
@@ -47,7 +47,7 @@ export async function approveStrategyToken(
   }
 
   const signer = jsonProvider.getSigner(accountAddress);
-  const { strategy } = await getStrategyInfo(chainId, strategyAddress);
+  const strategy = await getStrategyInfo(chainId, strategyAddress);
 
   const token = strategy[tokenIdx === 0 ? 'token0' : 'token1'];
 
@@ -77,7 +77,7 @@ export async function depositLP(
   }
   const signer = jsonProvider.getSigner(accountAddress);
   const strategyContract = getStrategyContract(strategyAddress, signer);
-  const { strategy } = await getStrategyInfo(chainId, strategyAddress);
+  const strategy = await getStrategyInfo(chainId, strategyAddress);
 
   if (parseInt(strategy.token0.id, 16) > parseInt(strategy.token1.id, 16)) {
     // eslint-disable-next-line prefer-destructuring, no-param-reassign
