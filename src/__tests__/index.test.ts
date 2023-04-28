@@ -17,9 +17,9 @@ import {
   getStrategyInfo,
   isStrategyTokenApproved,
   approveStrategyToken,
+  getRanges,
 } from '../index';
 import formatBigInt from '../utils/formatBigInt';
-import { getRanges } from '../functions/getLiquidityRatio';
 
 const hdWalletProvider = new HDWalletProvider([process.env.PRIVATE_KEY!], 'https://bsc-dataseed1.binance.org', 0, 1);
 

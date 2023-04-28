@@ -58,7 +58,7 @@ export async function getRanges(strategyAddress: string, provider: JsonRpcProvid
   }));
 }
 
-export default async function getLiquidityRatio(strategyAddress: string, provider: JsonRpcProvider) {
+export async function getLiquidityRatio(strategyAddress: string, provider: JsonRpcProvider) {
   const { chainId } = provider.network;
   const strategy = await getStrategyInfo(chainId, strategyAddress);
 
