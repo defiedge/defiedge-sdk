@@ -32,7 +32,8 @@ export interface Strategy {
   userCount: string;
   feeTier: string;
   collectedFeesToken0: string;
-  type: string;
+  type: DataFeed;
+  dex: Dex;
   collectedFeesToken1: string;
   onHold: boolean;
   token0: Token;
@@ -40,6 +41,17 @@ export interface Strategy {
   // adds: Fee[]
   // removes: Fee[]
   rebalance: Rebalance[];
+}
+
+export enum DataFeed {
+  Chainlink,
+  Twap,
+}
+
+export enum Dex {
+  Uniswap,
+  Apeswap,
+  Pancakeswap,
 }
 
 export interface Rebalance {

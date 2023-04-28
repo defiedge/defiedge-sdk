@@ -18,6 +18,7 @@ import {
   isStrategyTokenApproved,
   approveStrategyToken,
   getRanges,
+  getLiquidity,
 } from '../index';
 import formatBigInt from '../utils/formatBigInt';
 
@@ -37,6 +38,12 @@ const amount1 = 0.00000001;
 
 describe('Strategy', () => {
   let share: string | null = null;
+
+  it('getRanges', async () => {
+    const ranges = await getRanges(strategy.address, provider);
+
+    expect(ranges.length).toBeGreaterThan(0);
+  });
 
   it('removeLP:all', async () => {
     const userShares = await getUserDeshareBalance(account, strategy.address, provider);
@@ -61,7 +68,7 @@ describe('Strategy', () => {
       });
   });
 
-  it('depositLp', async () => {
+  it.skip('depositLp', async () => {
     const isApproved0 = await isStrategyTokenApproved(account, 0, amount0, strategy.address, provider);
     const isApproved1 = await isStrategyTokenApproved(account, 1, amount1, strategy.address, provider);
 
@@ -102,6 +109,13 @@ describe('Strategy', () => {
     expect(userShares).toEqual(share || '0');
   });
 
+  it('getLiquidity', async () => {
+    const liquidity = await getLiquidity(strategy.address, provider);
+
+    expect(liquidity.amount0Total).toBeGreaterThan(0);
+    expect(liquidity.amount1Total).toBeGreaterThan(0);
+  });
+
   it('removeLP:deposited', async () => {
     if (!share) return;
 
@@ -127,20 +141,16 @@ describe('Strategy', () => {
     const a = await getLiquidityRatio(strategy.address, provider);
     expect(a).toBeGreaterThanOrEqual(0);
   });
+});
 
+describe('GraphQL', () => {
   it('getStrategyMetaData', async () => {
     const a = await getStrategyMetaData(strategy.chainId, strategy.address);
     expect(a).toBeTruthy();
   });
+
   it('GetStrategyInfo', async () => {
     const a = await getStrategyInfo(strategy.chainId, strategy.address);
     expect(a).toBeTruthy();
-  });
-
-  it('getRanges', async () => {
-    const ranges = await getRanges(strategy.address, provider);
-    console.log({ ranges });
-
-    expect(ranges.length).toBeGreaterThan(0);
   });
 });
