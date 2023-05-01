@@ -48,6 +48,8 @@ export async function getRanges(strategyAddress: string, provider: JsonRpcProvid
     getStrategyInfo(chainId, strategyAddress),
   ]);
 
+  if (!strategy) throw new Error(`Strategy not found [${chainId}, ${strategyAddress}]`);
+
   const tokenA = new Token(chainId, strategy.token0.id, +strategy.token0.decimals, strategy.token0.symbol);
   const tokenB = new Token(chainId, strategy.token1.id, +strategy.token1.decimals, strategy.token1.symbol);
 
@@ -108,6 +110,7 @@ export async function getLiquidity(
 }> {
   const { chainId } = provider.network;
   const strategy = await getStrategyInfo(chainId, strategyAddress);
+  if (!strategy) throw new Error(`Strategy not found [${chainId}, ${strategyAddress}]`);
 
   const token0 = getERC20Contract(strategy.token0.id, provider);
   const token1 = getERC20Contract(strategy.token1.id, provider);
@@ -164,6 +167,7 @@ export async function getLiquidity(
 export async function getLiquidityRatio(strategyAddress: string, provider: JsonRpcProvider) {
   const { chainId } = provider.network;
   const strategy = await getStrategyInfo(chainId, strategyAddress);
+  if (!strategy) throw new Error(`Strategy not found [${chainId}, ${strategyAddress}]`);
 
   const tokenA = new Token(chainId, strategy.token0.id, +strategy.token0.decimals, strategy.token0.symbol);
   const tokenB = new Token(chainId, strategy.token1.id, +strategy.token1.decimals, strategy.token1.symbol);

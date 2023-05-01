@@ -54,6 +54,7 @@ export async function removeLP(
 
   const strategyContract = getStrategyContract(strategyAddress, signer);
   const strategy = await getStrategyInfo(chainId, strategyAddress);
+  if (!strategy) throw new Error(`Strategy not found [${chainId}, ${strategyAddress}]`);
 
   const params: Parameters<typeof strategyContract.burn> = [
     parseBigInt(shares, 18),
