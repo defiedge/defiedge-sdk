@@ -1,6 +1,7 @@
 import { ContractTransaction, Overrides } from '@ethersproject/contracts';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { MaxUint256 } from '@ethersproject/constants';
+import { BigNumber } from 'ethers';
 import { getERC20Contract, getStrategyContract } from '../contracts';
 import parseBigInt from '../utils/parseBigInt';
 import { getStrategyInfo } from './strategy';
@@ -40,7 +41,7 @@ export async function approveStrategyToken(
   tokenIdx: 0 | 1,
   strategyAddress: string,
   jsonProvider: JsonRpcProvider,
-  amount?: string | number,
+  amount?: string | number | BigNumber,
   overrides?: Overrides,
 ): Promise<ContractTransaction> {
   const { chainId } = jsonProvider.network;
@@ -56,7 +57,12 @@ export async function approveStrategyToken(
 
   const tokenContract = getERC20Contract(token.id, signer);
 
-  const amountBN = amount ? parseBigInt(amount, +token.decimals || 18) : MaxUint256;
+  // eslint-disable-next-line no-nested-ternary
+  const amountBN = amount
+    ? amount instanceof BigNumber
+      ? amount
+      : parseBigInt(amount, +token.decimals || 18)
+    : MaxUint256;
 
   const gasLimit =
     overrides?.gasLimit ?? calculateGasMargin(await tokenContract.estimateGas.approve(strategyAddress, amountBN));
@@ -66,8 +72,8 @@ export async function approveStrategyToken(
 
 export async function depositLP(
   accountAddress: string,
-  amount0: string | number,
-  amount1: string | number,
+  amount0: string | number | BigNumber,
+  amount1: string | number | BigNumber,
   strategyAddress: string,
   jsonProvider: JsonRpcProvider,
   overrides?: Overrides,
@@ -90,8 +96,8 @@ export async function depositLP(
   }
 
   const params: Parameters<typeof strategyContract.mint> = [
-    parseBigInt(amount0, +strategy.token0.decimals),
-    parseBigInt(amount1, +strategy.token1.decimals),
+    amount0 instanceof BigNumber ? amount0 : parseBigInt(amount0, +strategy.token0.decimals),
+    amount1 instanceof BigNumber ? amount1 : parseBigInt(amount1, +strategy.token0.decimals),
     parseBigInt(_amount0Min, +strategy.token0.decimals),
     parseBigInt(_amount1Min, +strategy.token1.decimals),
     0,
