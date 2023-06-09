@@ -37,7 +37,7 @@ export async function getUserDeshareBalance(
 
 export async function removeLP(
   accountAddress: string,
-  shares: string | number,
+  shares: string | number | BigNumber,
   strategyAddress: string,
   jsonProvider: JsonRpcProvider,
   overrides?: Overrides,
@@ -57,7 +57,7 @@ export async function removeLP(
   if (!strategy) throw new Error(`Strategy not found [${chainId}, ${strategyAddress}]`);
 
   const params: Parameters<typeof strategyContract.burn> = [
-    parseBigInt(shares, 18),
+    shares instanceof BigNumber ? shares : parseBigInt(shares, 18),
     parseBigInt(_amount0Min, +strategy.token0.decimals),
     parseBigInt(_amount1Min, +strategy.token1.decimals),
   ];
