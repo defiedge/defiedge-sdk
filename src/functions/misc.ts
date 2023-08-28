@@ -24,7 +24,9 @@ async function currentPrice(address: string, provider: JsonRpcProvider, baseToke
 
   const liquidity = await poolContract.liquidity();
 
-  const { tick, sqrtPriceX96 } = await poolContract.slot0();
+  const { tick, sqrtPriceX96 } = await poolContract
+    .slot0()
+    .catch(() => poolContract.globalState().then((e) => ({ ...e, sqrtPriceX96: e.price })));
   const sqrtRatioX96 = JSBI.BigInt(sqrtPriceX96);
   const cp = new Price(baseToken, quoteToken, Q192, JSBI.multiply(sqrtRatioX96, sqrtRatioX96)).toSignificant(6);
 
