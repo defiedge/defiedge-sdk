@@ -173,7 +173,7 @@ export async function getLiquidityRatio(strategyAddress: string, provider: JsonR
   const tokenB = new Token(chainId, strategy.token1.id, +strategy.token1.decimals, strategy.token1.symbol);
   const { cp, tick } = await currentPrice(strategy.pool, provider, tokenA, tokenB);
 
-  const range = strategy.rebalance[0].ranges[0];
+  const [range] = await getRanges(strategy.id, provider);
 
   if (!range) {
     console.warn('Strategy on hold');
