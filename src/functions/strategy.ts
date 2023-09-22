@@ -7,11 +7,15 @@ import { StrategyMetaQuery } from '../types/strategyMetaQuery';
 const promises: Record<string, Promise<any>> = {};
 
 const urls: Record<SupportedChainId, string> = {
-  [SupportedChainId.arbitrum]: 'https://api.thegraph.com/subgraphs/name/pranavraut033/defiedge-arbitrum',
-  [SupportedChainId.mainnet]: 'https://api.thegraph.com/subgraphs/name/pranavraut033/defiedge',
-  [SupportedChainId.optimism]: 'https://api.thegraph.com/subgraphs/name/pranavraut033/defiedge-optimism',
-  [SupportedChainId.polygon]: 'https://api.thegraph.com/subgraphs/name/pranavraut033/defiedge-polygon',
-  [SupportedChainId.bsc]: 'https://api.thegraph.com/subgraphs/name/pranavraut033/defiedge-bsc',
+  [SupportedChainId.arbitrum]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-arbitrum',
+  // [SupportedChainId.avalanche]: 'https://api.thegraph.com/subgraphs/name/unbound-finance/avalanche-staging',
+  [SupportedChainId.base]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-base',
+  [SupportedChainId.bsc]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-bsc',
+  [SupportedChainId.mainnet]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-mainnet',
+  [SupportedChainId.mantle]: 'https://graph.fusionx.finance/subgraphs/name/unbound-finance/mantle-staging',
+  [SupportedChainId.moonbeam]: 'https://api.thegraph.com/subgraphs/name/unbound-finance/moonbeam-staging',
+  [SupportedChainId.optimism]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-optimism',
+  [SupportedChainId.polygon]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-polygon',
 };
 
 const APP_URL = 'https://api.defiedge.io';

@@ -49,9 +49,18 @@ export enum DataFeed {
 }
 
 export enum Dex {
-  Uniswap,
   Apeswap,
+  Arbidex,
+  Camelot,
+  Fusionx,
+  Horiza,
   Pancakeswap,
+  Ramses,
+  Retro,
+  Stellaswap,
+  Sushiswap,
+  Thena,
+  Uniswap,
 }
 
 export interface Rebalance {

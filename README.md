@@ -118,7 +118,7 @@ const accountAddress = "0xaaaa...aaaaaa"
 
 const ratio = await getLiquidityRatio(
     strategyAddress, 
-    web3Provider
+    web3Provider,
 )
 
 const amount0 = 100
@@ -266,10 +266,13 @@ For api detail and other functions please refer to this [postman documentation](
 ```typescript
 enum SupportedChainId {
   arbitrum = 42161,
+  base = 8453,
+  bsc = 56,
   mainnet = 1,
+  mantle = 5000,
+  moonbeam = 1284,
   optimism = 10,
   polygon = 137,
-  bsc = 56,
 }
 ```
 
