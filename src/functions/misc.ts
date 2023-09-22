@@ -11,6 +11,14 @@ import { getLiquidityHelperAddress } from '../utils/config/functions';
 import getPositionKey from '../utils/positionKey';
 import formatBigInt from '../utils/formatBigInt';
 
+/**
+ * Calculates the ratio of a given number to the square root of the minimum and maximum values.
+ *
+ * @param {number} p - The number to calculate the ratio for.
+ * @param {number} pmin - The minimum value.
+ * @param {number} pmax - The maximum value.
+ * @return {number} The calculated ratio.
+ */
 function ratio(p: number, pmin: number, pmax: number) {
   const sqp = Math.sqrt(p);
   return (sqp * (sqp - Math.sqrt(pmin))) / (1 - sqp / Math.sqrt(pmax));
@@ -19,6 +27,15 @@ function ratio(p: number, pmin: number, pmax: number) {
 export const Q96 = JSBI.exponentiate(JSBI.BigInt(2), JSBI.BigInt(96));
 export const Q192 = JSBI.exponentiate(Q96, JSBI.BigInt(2));
 
+/**
+ * Retrieves the current price of a given pool.
+ *
+ * @param {string} address - The address of the pool.
+ * @param {JsonRpcProvider} provider - The JSON-RPC provider.
+ * @param {Token} baseToken - The base token.
+ * @param {Token} quoteToken - The quote token.
+ * @return {Promise<Object>} An object containing the current price, tick, square root of the price, and liquidity of the pool.
+ */
 async function currentPrice(address: string, provider: JsonRpcProvider, baseToken: Token, quoteToken: Token) {
   const poolContract = getPoolContract(address, provider);
 
@@ -38,6 +55,13 @@ async function currentPrice(address: string, provider: JsonRpcProvider, baseToke
   };
 }
 
+/**
+ * Retrieves the price ranges for a given strategy.
+ *
+ * @param {string} strategyAddress - The address of the strategy.
+ * @param {JsonRpcProvider} provider - The JSON-RPC provider used to interact with the blockchain.
+ * @return {Promise<Range>} An array of objects representing the price ranges.
+ */
 export async function getRanges(strategyAddress: string, provider: JsonRpcProvider) {
   const strategyContract = getStrategyContract(strategyAddress, provider);
   let orders: IStrategyBase.TickStructOutput[] = [];
@@ -69,13 +93,28 @@ export async function getRanges(strategyAddress: string, provider: JsonRpcProvid
   }));
 }
 
+type Amounts = {
+  amount0: BigNumber;
+  amount1: BigNumber;
+};
+
+/**
+ * Retrieves the amounts for a given liquidity range in a strategy.
+ *
+ * @param {Pick<Strategy, 'pool' | 'dex' | 'type'>} strategy - The strategy object containing the pool, dex, and type.
+ * @param {number} tickLower - The lower tick of the liquidity range.
+ * @param {number} tickUpper - The upper tick of the liquidity range.
+ * @param {BigNumber} liquidity - The liquidity amount to query.
+ * @param {JsonRpcProvider} provider - The JSON-RPC provider.
+ * @returns {Promise<Amounts>} A promise that resolves to the amounts for the liquidity range.
+ */
 async function getAmountsForLiquidity(
   strategy: Pick<Strategy, 'pool' | 'dex' | 'type'>,
   tickLower: number,
   tickUpper: number,
   liquidity: BigNumber,
   provider: JsonRpcProvider,
-) {
+): Promise<Amounts> {
   const { chainId } = provider.network;
 
   const address = getLiquidityHelperAddress(chainId, strategy.dex, strategy.type === DataFeed.Twap)!;
@@ -84,12 +123,29 @@ async function getAmountsForLiquidity(
   return contract.getAmountsForLiquidity(strategy.pool, tickLower, tickUpper, liquidity);
 }
 
+type Position = {
+  liquidity: BigNumber;
+  feeGrowthInside0LastX128: BigNumber;
+  feeGrowthInside1LastX128: BigNumber;
+  tokensOwed0: BigNumber;
+  tokensOwed1: BigNumber;
+};
+
+/**
+ * Retrieves the position details for a given strategy, tick range, and provider.
+ *
+ * @param {Pick<Strategy, 'id' | 'pool'>} strategy - The strategy object containing the id and pool information.
+ * @param {number} tickLower - The lower boundary of the tick range.
+ * @param {number} tickUpper - The upper boundary of the tick range.
+ * @param {JsonRpcProvider} provider - The provider used to query the position details.
+ * @return {Promise<Position>} - A promise that resolves to the position details.
+ */
 async function getPosition(
   strategy: Pick<Strategy, 'id' | 'pool'>,
   tickLower: number,
   tickUpper: number,
   provider: JsonRpcProvider,
-) {
+): Promise<Position> {
   const pool = getPoolContract(strategy.pool, provider);
 
   const positionKey = getPositionKey(strategy.id, tickLower, tickUpper);
@@ -97,6 +153,22 @@ async function getPosition(
   return position;
 }
 
+/**
+ * Retrieves the liquidity information for a given strategy.
+ *
+ * @param {string} strategyAddress - The address of the strategy.
+ * @param {JsonRpcProvider} provider - The JSON-RPC provider.
+ * @return {Promise<{
+ *   amount0: number;
+ *   amount1: number;
+ *   unusedAmount0: number;
+ *   unusedAmount1: number;
+ *   amount0Total: number;
+ *   amount1Total: number;
+ *   unusedAmount0BigNumber: unknown;
+ *   unusedAmount1BigNumber: unknown;
+ * }>} The liquidity information.
+ */
 export async function getLiquidity(
   strategyAddress: string,
   provider: JsonRpcProvider,

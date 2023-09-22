@@ -9,6 +9,16 @@ import { SupportedChainId } from '../types';
 import calculateGasMargin from '../types/calculateGasMargin';
 import formatBigInt from '../utils/formatBigInt';
 
+/**
+ * Checks if the strategy token is approved.
+ *
+ * @param {string} accountAddress - The address of the account.
+ * @param {0 | 1} tokenIdx - The index of the token.
+ * @param {string | number} amount - The amount of the token.
+ * @param {string} strategyAddress - The address of the strategy.
+ * @param {JsonRpcProvider} jsonProvider - The JSON provider.
+ * @return {Promise<boolean>} A Promise that resolves to a boolean value indicating if the token is approved.
+ */
 export async function isStrategyTokenApproved(
   accountAddress: string,
   tokenIdx: 0 | 1,
@@ -36,6 +46,17 @@ export async function isStrategyTokenApproved(
   return currentAllowance !== 0 && currentAllowance >= +(amount ?? 0);
 }
 
+/**
+ * Approve a strategy token.
+ *
+ * @param {string} accountAddress - The account address.
+ * @param {0 | 1} tokenIdx - The token index.
+ * @param {string} strategyAddress - The strategy address.
+ * @param {JsonRpcProvider} jsonProvider - The JSON RPC provider.
+ * @param {string | number | BigNumber} [amount] - The amount.
+ * @param {Overrides} [overrides] - The overrides.
+ * @return {Promise<ContractTransaction>} The contract transaction promise.
+ */
 export async function approveStrategyToken(
   accountAddress: string,
   tokenIdx: 0 | 1,
@@ -70,6 +91,19 @@ export async function approveStrategyToken(
   return tokenContract.approve(strategyAddress, amountBN, { gasLimit });
 }
 
+/**
+ * Deposits liquidity into a strategy contract.
+ *
+ * @param {string} accountAddress - The address of the user account.
+ * @param {string | number | BigNumber} amount0 - The amount of token0 to deposit.
+ * @param {string | number | BigNumber} amount1 - The amount of token1 to deposit.
+ * @param {string} strategyAddress - The address of the strategy contract.
+ * @param {JsonRpcProvider} jsonProvider - The JSON-RPC provider.
+ * @param {Overrides} [overrides] - The transaction overrides.
+ * @param {string} [_amount0Min='0'] - The minimum amount of token0 to deposit.
+ * @param {string} [_amount1Min='0'] - The minimum amount of token1 to deposit.
+ * @return {Promise<ContractTransaction>} - A promise that resolves to the contract transaction.
+ */
 export async function depositLP(
   accountAddress: string,
   amount0: string | number | BigNumber,

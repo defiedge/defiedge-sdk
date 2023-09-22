@@ -127,6 +127,13 @@ const strategyMetaQuery = gql`
   }
 `;
 
+/**
+ * Retrieves the metadata for a strategy.
+ *
+ * @param {SupportedChainId} chainId - The chain ID of the strategy.
+ * @param {string} strategyAddress - The address of the strategy.
+ * @return {Promise<StrategyMetaQuery['strategy']>} A promise that resolves to the strategy metadata.
+ */
 export async function getStrategyMetaData(
   chainId: SupportedChainId,
   strategyAddress: string,
