@@ -238,9 +238,35 @@ export async function getLiquidity(
   };
 }
 
-export async function getLiquidityRatio(strategyAddress: string, provider: JsonRpcProvider) {
+/**
+ * Calculates the liquidity ratio for a given strategy.
+ *
+ * @param {string} strategyAddress - The address of the strategy.
+ * @param {JsonRpcProvider} provider - The provider for the JSON-RPC.
+ * @param {boolean} wrtToken1 - Whether to calculate the ratio with respect to token1.
+ * @return {Promise<number>} - The liquidity ratio.
+ * @throws {Error} - If the strategy doesn't have valid liquidity distribution or if the strategy is not found.
+ */
+export async function getLiquidityRatio(
+  strategyAddress: string,
+  provider: JsonRpcProvider,
+  wrtToken1: boolean = false,
+): Promise<number> {
   const { chainId } = provider.network;
   const strategy = await getStrategyInfo(chainId, strategyAddress);
+
+  if (strategy.type === DataFeed.Twap) {
+    const liquidity = await getLiquidity(strategyAddress, provider);
+
+    if (!liquidity.amount1 || !liquidity.amount0) {
+      throw new Error(`Strategy doesn't have valid liquidity distribution [${chainId}, ${strategyAddress}]`);
+    }
+
+    return wrtToken1
+      ? liquidity.amount1Total / liquidity.amount0Total
+      : liquidity.amount0Total / liquidity.amount1Total;
+  }
+
   if (!strategy) throw new Error(`Strategy not found [${chainId}, ${strategyAddress}]`);
 
   const tokenA = new Token(chainId, strategy.token0.id, +strategy.token0.decimals, strategy.token0.symbol);
@@ -250,22 +276,17 @@ export async function getLiquidityRatio(strategyAddress: string, provider: JsonR
   const [range] = await getRanges(strategy.id, provider);
 
   if (!range) {
-    console.warn('Strategy on hold');
+    console.warn('Strategy on hold, only single sided deposit is allowed');
     return 0;
   }
 
   if (+range.tickLower > tick && tick < +range.tickUpper) {
-    console.warn('Range are single sided is allowed');
+    console.warn('Primary position is out of range, only single sided deposit is allowed');
     return 0;
   }
 
-  const data = {
-    lowerBound: +tickToPrice(tokenA, tokenB, +range.tickLower).toSignificant(6), // Number
-    upperBound: +tickToPrice(tokenA, tokenB, +range.tickUpper).toSignificant(6), // Number
-  };
+  const pa = +tickToPrice(tokenA, tokenB, +range.tickLower).toSignificant(6);
+  const pb = +tickToPrice(tokenA, tokenB, +range.tickUpper).toSignificant(6);
 
-  const pa = data.lowerBound;
-  const pb = data.upperBound;
-
-  return ratio(+cp, pa, pb);
+  return wrtToken1 ? ratio(1 / +cp, 1 / pb, 1 / pa) : ratio(+cp, pa, pb);
 }
