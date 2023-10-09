@@ -1,6 +1,6 @@
 {
   "name": "@defiedge/sdk",
-  "version": "0.0.7",
+  "version": "0.0.7-a",
   "description": "A defiedge SDk to deposit and remove lp",
   "main": "dist/src/index.cjs.js",
   "module": "dist/src/index.esm.js",
