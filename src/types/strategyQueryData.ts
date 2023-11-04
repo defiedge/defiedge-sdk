@@ -40,12 +40,12 @@ export interface Strategy {
   token1: Token;
   // adds: Fee[]
   // removes: Fee[]
-  rebalance: Rebalance[];
+  // rebalance: Rebalance[];
 }
 
 export enum DataFeed {
-  Chainlink,
-  Twap,
+  Chainlink = 'Chainlink',
+  Twap = 'Twap',
 }
 
 export enum Dex {

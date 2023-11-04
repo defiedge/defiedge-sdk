@@ -22,7 +22,7 @@ const APP_URL = 'https://api.defiedge.io';
 
 const strategyQuery = gql`
   query ($strategyAddress: String!) {
-    strategy(id: $strategyAddress) {
+    strategy(id: $strategyAddress, subgraphError: allow) {
       id
       name
       hash
@@ -70,16 +70,16 @@ const strategyQuery = gql`
       #   amount0
       #   amount1
       # }
-      rebalance(orderBy: timestamp, orderDirection: desc) {
-        timestamp
-        gasUsed
-        ranges {
-          amount0
-          amount1
-          tickLower
-          tickUpper
-        }
-      }
+      # rebalance(orderBy: timestamp, orderDirection: desc, first: 1) {
+      #   timestamp
+      #   gasUsed
+      #   ranges {
+      #     amount0
+      #     amount1
+      #     tickLower
+      #     tickUpper
+      #   }
+      # }
     }
     # fees(where: { strategy: $strategyAddress }, first: 1000) {
     #   id

@@ -22,15 +22,36 @@ import {
 } from '../index';
 import formatBigInt from '../utils/formatBigInt';
 
-const hdWalletProvider = new HDWalletProvider([process.env.PRIVATE_KEY!], 'https://bsc-dataseed1.binance.org', 0, 1);
-
-const provider = new Web3Provider(hdWalletProvider, { chainId: SupportedChainId.bsc, name: 'bsc' });
-const account = process.env.ACCOUNT!;
+const DEFAULT_REGISTRY: Record<SupportedChainId, string> = {
+  // [SupportedChainId.a]: 'https://avalanche.public-rpc.com',
+  // [SupportedChainId.CELO_MAINNET]: 'https://forno.celo.org',
+  // [SupportedChainId.FANTOM_OPERA_MAINNET]: 'https://rpc.ftm.tools/',
+  // [SupportedChainId.GNOSIS_MAINNET]: 'https://rpc.gnosischain.com/',
+  // [SupportedChainId.HARMONY_MAINNET]: 'https://harmony.public-rpc.com',
+  // [SupportedChainId.MOONRIVER_MAINNET]: 'https://rpc.moonriver.moonbeam.SupportedChainId',
+  // [SupportedChainId.CRONOS_MAINNET]: 'https://evm-cronos.crypto.org',
+  // [SupportedChainId.AURORA_MAINNET]: 'https://mainnet.aurora.dev',
+  // [SupportedChainId.EVMOS_MAINNET]: 'https://eth.bd.evmos.org:8545',
+  [SupportedChainId.arbitrum]: 'https://arb1.arbitrum.io/rpc',
+  [SupportedChainId.bsc]: 'https://bsc-dataseed.binance.org/',
+  [SupportedChainId.mainnet]: 'https://eth-mainnet-public.unifra.io',
+  [SupportedChainId.optimism]: 'https://mainnet.optimism.io',
+  [SupportedChainId.polygon]: 'https://polygon-rpc.com',
+  [SupportedChainId.base]: 'https://base.llamarpc.com',
+  [SupportedChainId.mantle]: 'https://1rpc.io/mantle',
+  [SupportedChainId.moonbeam]: 'https://endpoints.omniatech.io/v1/moonbeam/mainnet/public',
+};
 
 const strategy = {
-  address: '0xb6e4664c6f6d0d09ef71882977048799baf472d1',
-  chainId: SupportedChainId.bsc,
+  address: '0x075c2d4f7404727f48c5d617ef0a195e0b4623a0',
+  chainId: SupportedChainId.base,
+  name: 'Base',
 };
+
+const hdWalletProvider = new HDWalletProvider([process.env.PRIVATE_KEY!], DEFAULT_REGISTRY[strategy.chainId], 0, 1);
+
+const provider = new Web3Provider(hdWalletProvider, { chainId: strategy.chainId, name: strategy.name });
+const account = process.env.ACCOUNT!;
 
 const iface = new ethers.utils.Interface(STRATEGY_ABI);
 const amount0 = 0;
@@ -139,6 +160,7 @@ describe('Strategy', () => {
 
   it('getLiquidityRatio', async () => {
     const a = await getLiquidityRatio(strategy.address, provider);
+
     expect(a).toBeGreaterThanOrEqual(0);
   });
 });

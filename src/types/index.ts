@@ -4,8 +4,8 @@ import { Provider } from '@ethersproject/providers';
 export type SignerOrProvider = Signer | Provider;
 
 export enum SupportedChainId {
-  arbitrum = 42161,
   // avalanche = 43114,
+  arbitrum = 42161,
   base = 8453,
   bsc = 56,
   mainnet = 1,

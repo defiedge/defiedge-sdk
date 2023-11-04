@@ -255,19 +255,19 @@ export async function getLiquidityRatio(
   const { chainId } = provider.network;
   const strategy = await getStrategyInfo(chainId, strategyAddress);
 
+  if (!strategy) throw new Error(`[${chainId}, ${strategyAddress}] Strategy not found `);
+
   if (strategy.type === DataFeed.Twap) {
     const liquidity = await getLiquidity(strategyAddress, provider);
 
     if (!liquidity.amount1 || !liquidity.amount0) {
-      throw new Error(`Strategy doesn't have valid liquidity distribution [${chainId}, ${strategyAddress}]`);
+      throw new Error(`[${chainId}, ${strategyAddress}] Strategy doesn't have valid liquidity distribution `);
     }
 
     return wrtToken1
-      ? liquidity.amount1Total / liquidity.amount0Total
-      : liquidity.amount0Total / liquidity.amount1Total;
+      ? liquidity.amount0Total / liquidity.amount1Total
+      : liquidity.amount1Total / liquidity.amount0Total;
   }
-
-  if (!strategy) throw new Error(`Strategy not found [${chainId}, ${strategyAddress}]`);
 
   const tokenA = new Token(chainId, strategy.token0.id, +strategy.token0.decimals, strategy.token0.symbol);
   const tokenB = new Token(chainId, strategy.token1.id, +strategy.token1.decimals, strategy.token1.symbol);
