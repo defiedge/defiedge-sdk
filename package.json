@@ -1,6 +1,6 @@
 {
   "name": "@defiedge/sdk",
-  "version": "0.0.7-a",
+  "version": "0.0.8",
   "description": "A defiedge SDk to deposit and remove lp",
   "main": "dist/src/index.cjs.js",
   "module": "dist/src/index.esm.js",
@@ -25,7 +25,7 @@
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint & yarn build",
     "preversion": "npm run lint",
-    "test": "jest --runInBand --forceExit",
+    "test": "jest --runInBand --forceExit ",
     "version": "npm run format && git add -A src"
   },
   "repository": {
