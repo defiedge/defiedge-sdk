@@ -260,7 +260,7 @@ export async function getLiquidityRatio(
   if (strategy.type === DataFeed.Twap) {
     const liquidity = await getLiquidity(strategyAddress, provider);
 
-    if (!liquidity.amount1 || !liquidity.amount0) {
+    if (!liquidity.amount0Total || !liquidity.amount1Total) {
       throw new Error(`[${chainId}, ${strategyAddress}] Strategy doesn't have valid liquidity distribution `);
     }
 
