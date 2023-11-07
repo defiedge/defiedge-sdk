@@ -137,7 +137,7 @@ export async function depositLP(
     0,
   ];
 
-  const gasLimit = overrides?.gasLimit ?? calculateGasMargin(await strategyContract.estimateGas.mint(...params));
+  const gasLimit = overrides?.gasLimit; // ?? calculateGasMargin(await strategyContract.estimateGas.mint(...params));
 
   params[5] = { ...overrides, gasLimit };
 
