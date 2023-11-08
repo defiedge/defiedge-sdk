@@ -124,18 +124,20 @@ export async function depositLP(
 
   if (!strategy) throw new Error(`Strategy not found [${chainId}, ${strategyAddress}]`);
 
-  if (parseInt(strategy.token0.id, 16) > parseInt(strategy.token1.id, 16)) {
-    // eslint-disable-next-line prefer-destructuring, no-param-reassign
-    amount1 = [amount0, (amount0 = amount1)][0];
-  }
+  // if (parseInt(strategy.token0.id, 16) > parseInt(strategy.token1.id, 16)) {
+  //   // eslint-disable-next-line prefer-destructuring, no-param-reassign
+  //   amount1 = [amount0, (amount0 = amount1)][0];
+  // }
 
   const params: Parameters<typeof strategyContract.mint> = [
     amount0 instanceof BigNumber ? amount0 : parseBigInt(amount0, +strategy.token0.decimals),
-    amount1 instanceof BigNumber ? amount1 : parseBigInt(amount1, +strategy.token0.decimals),
+    amount1 instanceof BigNumber ? amount1 : parseBigInt(amount1, +strategy.token1.decimals),
     parseBigInt(_amount0Min, +strategy.token0.decimals),
     parseBigInt(_amount1Min, +strategy.token1.decimals),
     0,
   ];
+
+  console.log('params', params);
 
   const gasLimit = overrides?.gasLimit; // ?? calculateGasMargin(await strategyContract.estimateGas.mint(...params));
 
