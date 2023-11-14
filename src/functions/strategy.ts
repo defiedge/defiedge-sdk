@@ -40,6 +40,7 @@ const strategyQuery = gql`
       type
       collectedFeesToken1
       onHold
+      dex
       token0 {
         id
         symbol
@@ -103,6 +104,7 @@ const strategyMetaQuery = gql`
       address
       aum
       createdAt
+      dex
       feesApr: fees_apr {
         USD
         BTC

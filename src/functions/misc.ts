@@ -199,18 +199,24 @@ export async function getLiquidity(
         amount0: BigNumber;
         amount1: BigNumber;
       }>(
-        orders.map(async (subarray) => {
-          const { liquidity } = await getPosition(strategy, subarray.tickLower, subarray.tickUpper, provider);
+        orders.map(async (subarray, idx) => {
+          try {
+            const { liquidity } = await getPosition(strategy, subarray.tickLower, subarray.tickUpper, provider);
 
-          const { amount0, amount1 } = await getAmountsForLiquidity(
-            strategy,
-            subarray.tickLower,
-            subarray.tickUpper,
-            liquidity,
-            provider,
-          );
+            const { amount0, amount1 } = await getAmountsForLiquidity(
+              strategy,
+              subarray.tickLower,
+              subarray.tickUpper,
+              liquidity,
+              provider,
+            );
 
-          return { amount0, amount1 };
+            return { amount0, amount1 };
+          } catch (error: any) {
+            console.log('error for ', idx, error);
+
+            return { amount0: BigNumber.from(0), amount1: BigNumber.from(0) };
+          }
         }),
       );
 
@@ -258,15 +264,16 @@ export async function getLiquidityRatio(
   if (!strategy) throw new Error(`[${chainId}, ${strategyAddress}] Strategy not found `);
 
   if (strategy.type === DataFeed.Twap) {
-    const liquidity = await getLiquidity(strategyAddress, provider);
+    const strategyContract = getStrategyContract(strategyAddress, provider);
+    const aumWithFees = await strategyContract.callStatic.getAUMWithFees(false);
 
-    if (!liquidity.amount0Total || !liquidity.amount1Total) {
+    if (!aumWithFees.amount0 || !aumWithFees.amount1) {
       throw new Error(`[${chainId}, ${strategyAddress}] Strategy doesn't have valid liquidity distribution `);
     }
 
-    return wrtToken1
-      ? liquidity.amount0Total / liquidity.amount1Total
-      : liquidity.amount1Total / liquidity.amount0Total;
+    return +formatBigInt(
+      wrtToken1 ? aumWithFees.amount0.div(aumWithFees.amount1) : aumWithFees.amount1.div(aumWithFees.amount0),
+    );
   }
 
   const tokenA = new Token(chainId, strategy.token0.id, +strategy.token0.decimals, strategy.token0.symbol);
