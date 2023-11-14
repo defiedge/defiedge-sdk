@@ -267,13 +267,14 @@ export async function getLiquidityRatio(
     const strategyContract = getStrategyContract(strategyAddress, provider);
     const aumWithFees = await strategyContract.callStatic.getAUMWithFees(false);
 
-    if (!aumWithFees.amount0 || !aumWithFees.amount1) {
+    const amount0 = +formatBigInt(aumWithFees.amount0, +strategy.token0.decimals);
+    const amount1 = +formatBigInt(aumWithFees.amount1, +strategy.token1.decimals);
+
+    if (!amount0 || !amount1) {
       throw new Error(`[${chainId}, ${strategyAddress}] Strategy doesn't have valid liquidity distribution `);
     }
 
-    return +formatBigInt(
-      wrtToken1 ? aumWithFees.amount0.div(aumWithFees.amount1) : aumWithFees.amount1.div(aumWithFees.amount0),
-    );
+    return wrtToken1 ? amount0 / amount1 : amount1 / amount0;
   }
 
   const tokenA = new Token(chainId, strategy.token0.id, +strategy.token0.decimals, strategy.token0.symbol);
