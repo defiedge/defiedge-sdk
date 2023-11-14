@@ -49,18 +49,18 @@ export enum DataFeed {
 }
 
 export enum Dex {
-  Apeswap,
-  Arbidex,
-  Camelot,
-  Fusionx,
-  Horiza,
-  Pancakeswap,
-  Ramses,
-  Retro,
-  Stellaswap,
-  Sushiswap,
-  Thena,
-  Uniswap,
+  Apeswap = 'Apeswap',
+  Arbidex = 'Arbidex',
+  Camelot = 'Camelot',
+  Fusionx = 'Fusionx',
+  Horiza = 'Horiza',
+  Pancakeswap = 'Pancakeswap',
+  Ramses = 'Ramses',
+  Retro = 'Retro',
+  Stellaswap = 'Stellaswap',
+  Sushiswap = 'Sushiswap',
+  Thena = 'Thena',
+  Uniswap = 'Uniswap',
 }
 
 export interface Rebalance {

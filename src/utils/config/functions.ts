@@ -23,8 +23,8 @@ export const getConfig = <K extends keyof Config>(
 
   let addressObj: AddressConfig | undefined = addressConfig[chainId][config][subConfig] as any;
 
-  if (typeof addressObj === 'object') {
-    addressObj = dex ? addressObj[dex] : addressObj;
+  if (dex && dex !== Dex.Uniswap && typeof addressObj === 'object') {
+    addressObj = addressObj[dex] ?? addressObj;
   }
 
   if (typeof addressObj === 'undefined') {

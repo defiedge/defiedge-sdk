@@ -69,12 +69,14 @@ const addressConfig: Record<ChainId, Config> = {
       liquidityHelperAddress: {
         default: '0x61622417f3c3a7f6b29784ec1a5297bae6eeafc4',
         [Dex.Camelot]: '0x44ef745AF9653bc308FFFaE06a6f79f3A47713c4',
-        [Dex.Ramses]: '0xdD06288279528593Db866Ba44d1D18494C6fAa1f',
+        [Dex.Horiza]: '0x72239eC62DfE283EAeEBcE8FFF4e41DC75A9147e',
         [Dex.Pancakeswap]: '0x85Ab2Eda11bC0cb73Cf798d76A1F2498CF60C841',
+        [Dex.Ramses]: '0xdD06288279528593Db866Ba44d1D18494C6fAa1f',
       },
       positionKeyHelper: {
         default: '',
         [Dex.Camelot]: '0x8aC8c590f502c52F0933417ADF599E80354E8fb5',
+        [Dex.Horiza]: '0x3279097A7B4B335f2a9c65d14FCFafc179B94c33',
         [Dex.Pancakeswap]: '0x649b92e970181eEbAf73EE100fE41CB4AD7d06Ba',
         [Dex.Ramses]: '0x84fe7A22f1113778Be5495eBEfF76483d6854099',
       },
