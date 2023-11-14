@@ -43,9 +43,9 @@ const DEFAULT_REGISTRY: Record<SupportedChainId, string> = {
 };
 
 const strategy = {
-  address: '0x075c2d4f7404727f48c5d617ef0a195e0b4623a0',
-  chainId: SupportedChainId.base,
-  name: 'Base',
+  address: '0x6f72aa5e1b42f0d091ba6c2b9fe3e326a3df6160',
+  chainId: SupportedChainId.arbitrum,
+  name: 'arbitrum',
 };
 
 const hdWalletProvider = new HDWalletProvider([process.env.PRIVATE_KEY!], DEFAULT_REGISTRY[strategy.chainId], 0, 1);
