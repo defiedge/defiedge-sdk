@@ -23,7 +23,7 @@ import {
 import formatBigInt from '../utils/formatBigInt';
 
 const DEFAULT_REGISTRY: Record<SupportedChainId, string> = {
-  // [SupportedChainId.a]: 'https://avalanche.public-rpc.com',
+  // [SupportedChainId.a]: '',
   // [SupportedChainId.CELO_MAINNET]: 'https://forno.celo.org',
   // [SupportedChainId.FANTOM_OPERA_MAINNET]: 'https://rpc.ftm.tools/',
   // [SupportedChainId.GNOSIS_MAINNET]: 'https://rpc.gnosischain.com/',
@@ -33,13 +33,16 @@ const DEFAULT_REGISTRY: Record<SupportedChainId, string> = {
   // [SupportedChainId.AURORA_MAINNET]: 'https://mainnet.aurora.dev',
   // [SupportedChainId.EVMOS_MAINNET]: 'https://eth.bd.evmos.org:8545',
   [SupportedChainId.arbitrum]: 'https://arb1.arbitrum.io/rpc',
+  [SupportedChainId.avalanche]: 'https://avalanche.public-rpc.com',
+  [SupportedChainId.base]: 'https://base.llamarpc.com',
   [SupportedChainId.bsc]: 'https://bsc-dataseed.binance.org/',
   [SupportedChainId.mainnet]: 'https://eth-mainnet-public.unifra.io',
-  [SupportedChainId.optimism]: 'https://mainnet.optimism.io',
-  [SupportedChainId.polygon]: 'https://polygon-rpc.com',
-  [SupportedChainId.base]: 'https://base.llamarpc.com',
   [SupportedChainId.mantle]: 'https://1rpc.io/mantle',
   [SupportedChainId.moonbeam]: 'https://endpoints.omniatech.io/v1/moonbeam/mainnet/public',
+  [SupportedChainId.optimism]: 'https://mainnet.optimism.io',
+  [SupportedChainId.polygon]: 'https://polygon-rpc.com',
+  [SupportedChainId.zkEVM]: 'https://1rpc.io/polygon/zkevm',
+  [SupportedChainId.zksyncEra]: 'https://1rpc.io/zksync2-era',
 };
 
 const strategy = {

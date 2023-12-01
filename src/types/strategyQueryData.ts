@@ -51,10 +51,13 @@ export enum DataFeed {
 export enum Dex {
   Apeswap = 'Apeswap',
   Arbidex = 'Arbidex',
+  Baseswap = 'Baseswap',
   Camelot = 'Camelot',
   Fusionx = 'Fusionx',
   Horiza = 'Horiza',
   Pancakeswap = 'Pancakeswap',
+  Pangolin = 'Pangolin',
+  Quickswap = 'Quickswap',
   Ramses = 'Ramses',
   Retro = 'Retro',
   Stellaswap = 'Stellaswap',

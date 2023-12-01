@@ -8,7 +8,7 @@ const promises: Record<string, Promise<any>> = {};
 
 const urls: Record<SupportedChainId, string> = {
   [SupportedChainId.arbitrum]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-arbitrum',
-  // [SupportedChainId.avalanche]: 'https://api.thegraph.com/subgraphs/name/unbound-finance/avalanche-staging',
+  [SupportedChainId.avalanche]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-avalanche',
   [SupportedChainId.base]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-base',
   [SupportedChainId.bsc]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-bsc',
   [SupportedChainId.mainnet]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-mainnet',
@@ -16,6 +16,8 @@ const urls: Record<SupportedChainId, string> = {
   [SupportedChainId.moonbeam]: 'https://api.thegraph.com/subgraphs/name/unbound-finance/moonbeam-staging',
   [SupportedChainId.optimism]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-optimism',
   [SupportedChainId.polygon]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-polygon',
+  [SupportedChainId.zkEVM]: 'https://api.studio.thegraph.com/query/58813/defiedge-zkevm/version/latest',
+  [SupportedChainId.zksyncEra]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-zksync-era',
 };
 
 const APP_URL = 'https://api.defiedge.io';
