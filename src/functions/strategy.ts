@@ -1,8 +1,9 @@
 // eslint-disable-next-line import/no-unresolved
-import { request, gql } from 'graphql-request';
-import { SupportedChainId } from '../types';
-import { StrategyQueryData } from '../types/strategyQueryData';
+import { gql, request } from 'graphql-request';
+
 import { StrategyMetaQuery } from '../types/strategyMetaQuery';
+import { StrategyQueryData } from '../types/strategyQueryData';
+import { SupportedChainId } from '../types';
 
 const promises: Record<string, Promise<any>> = {};
 
@@ -96,41 +97,21 @@ const strategyQuery = gql`
 const strategyMetaQuery = gql`
   query strategyMetadata($strategyAddress: String!, $network: Network!) {
     strategy(where: { network_address: { address: $strategyAddress, network: $network } }) {
-      id
-      title
-      subTitle
-      description
-      updatedAt
-      network
-      sharePrice
       address
       aum
       createdAt
+      description
       dex
-      feesApr: fees_apr {
-        USD
-        BTC
-        MATIC
-        ETH
-      }
-      sevenDayApy: seven_day_apy {
-        USD
-        BTC
-        MATIC
-        ETH
-      }
-      sinceInception: since_inception {
-        USD
-        BTC
-        MATIC
-        ETH
-      }
-      oneDayApy: one_day_apy {
-        USD
-        BTC
-        MATIC
-        ETH
-      }
+      fees_apr_usd
+      id
+      network
+      one_day_apy_usd
+      seven_day_apy_usd
+      sharePrice
+      since_inception_usd
+      subTitle
+      title
+      updatedAt
     }
   }
 `;
@@ -158,7 +139,28 @@ export async function getStrategyMetaData(
       network: Object.entries(SupportedChainId).find((e) => e[1] === chainId)![0],
     },
   )
-    .then((e) => e.strategy)
+    .then((e) => ({
+      ...e.strategy,
+      feesApr: { USD: e.strategy.fees_apr_usd },
+      sevenDayApy: { USD: e.strategy.seven_day_apy_usd },
+      sinceInception: { USD: e.strategy.since_inception_usd },
+      oneDayApy: { USD: e.strategy.one_day_apy_usd },
+    }))
+    .catch((e) => {
+      try {
+        const { strategy } = JSON.parse(e.response.error).data;
+
+        return {
+          ...strategy,
+          feesApr: { USD: strategy.fees_apr_usd },
+          sevenDayApy: { USD: strategy.seven_day_apy_usd },
+          sinceInception: { USD: strategy.since_inception_usd },
+          oneDayApy: { USD: strategy.one_day_apy_usd },
+        };
+      } catch {
+        throw e;
+      }
+    })
     .finally(() => setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */));
 
   // eslint-disable-next-line no-return-await
