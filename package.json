@@ -1,6 +1,6 @@
 {
   "name": "@defiedge/sdk",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "A defiedge SDk to deposit and remove lp",
   "main": "dist/src/index.cjs.js",
   "module": "dist/src/index.esm.js",
@@ -61,8 +61,8 @@
     "ethereumjs-util": "^7.1.4",
     "ethers": "^5.6.8",
     "global": "^4.4.0",
-    "graphql": "16.6.0",
-    "graphql-request": "^6.0.0",
+    "graphql": "^16.8.1",
+    "graphql-request": "^6.1.0",
     "jsbi": "^3.1.5",
     "typechain": "^8.0.0"
   },
