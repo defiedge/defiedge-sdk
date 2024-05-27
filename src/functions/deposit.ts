@@ -2,12 +2,44 @@ import { ContractTransaction, Overrides } from '@ethersproject/contracts';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { MaxUint256 } from '@ethersproject/constants';
 import { BigNumber } from 'ethers';
-import { getERC20Contract, getStrategyContract } from '../contracts';
+import { getERC20Contract, getSingleSidedStrategyContract, getStrategyContract } from '../contracts';
 import parseBigInt from '../utils/parseBigInt';
-import { getStrategyInfo } from './strategy';
+import { getSSDStrategies, getStrategyInfo } from './strategy';
 import { SupportedChainId } from '../types';
 import calculateGasMargin from '../types/calculateGasMargin';
 import formatBigInt from '../utils/formatBigInt';
+import { getConfig } from '../utils/config/functions';
+import { DataFeed } from '../types/strategyQueryData';
+
+export async function isStrategySingleSidedDeposit(
+  chainId: SupportedChainId,
+  strategyAddress: string,
+): Promise<boolean> {
+  const ssdStrategies = await getSSDStrategies();
+
+  return ssdStrategies[chainId].includes(strategyAddress.toLocaleLowerCase());
+}
+
+export async function isToken1DefaultTokenForStrategy(strategyAddress: string, jsonProvider: JsonRpcProvider) {
+  const { chainId } = jsonProvider.network;
+  const strategy = await getStrategyInfo(chainId, strategyAddress);
+
+  if (!strategy) throw new Error(`Strategy not found [${chainId}, ${strategyAddress}]`);
+
+  const singleSidedWrapper = getConfig(
+    chainId,
+    'others',
+    'singleSidedWrapper',
+    strategy.type === DataFeed.Twap,
+    strategy.dex,
+  );
+
+  if (!singleSidedWrapper) throw new Error(`Single sided wrapper not found [${chainId}, ${strategyAddress}]`);
+
+  const singleSidedWrapperContract = getSingleSidedStrategyContract(singleSidedWrapper, jsonProvider);
+
+  return singleSidedWrapperContract.isToken1DefaultTokenForStrategy(strategy.id);
+}
 
 /**
  * Checks if the strategy token is approved.
@@ -32,14 +64,36 @@ export async function isStrategyTokenApproved(
   }
 
   const signer = jsonProvider.getSigner(accountAddress);
-  const strategy = await getStrategyInfo(chainId, strategyAddress);
+
+  const [isSingleSided, isToken1DefaultToken, strategy] = await Promise.all([
+    isStrategySingleSidedDeposit(chainId, strategyAddress),
+    isToken1DefaultTokenForStrategy(strategyAddress, jsonProvider),
+    getStrategyInfo(chainId, strategyAddress),
+  ]);
 
   if (!strategy) throw new Error(`Strategy not found [${chainId}, ${strategyAddress}]`);
 
-  const token = strategy[tokenIdx === 0 ? 'token0' : 'token1'];
+  let token;
+  let depositAddress;
+
+  if (isSingleSided) {
+    const singleSidedWrapper = getConfig(
+      chainId,
+      'others',
+      'singleSidedWrapper',
+      strategy.type === DataFeed.Twap,
+      strategy.dex,
+    );
+
+    token = strategy[isToken1DefaultToken ? 'token1' : 'token0'];
+    depositAddress = singleSidedWrapper ?? strategyAddress;
+  } else {
+    token = strategy[tokenIdx === 0 ? 'token0' : 'token1'];
+    depositAddress = strategyAddress;
+  }
 
   const tokenContract = getERC20Contract(token.id, signer);
-  const currentAllowanceBN = await tokenContract.allowance(accountAddress, strategyAddress);
+  const currentAllowanceBN = await tokenContract.allowance(accountAddress, depositAddress);
 
   const currentAllowance = +formatBigInt(currentAllowanceBN, +token.decimals);
 
@@ -66,15 +120,39 @@ export async function approveStrategyToken(
   overrides?: Overrides,
 ): Promise<ContractTransaction> {
   const { chainId } = jsonProvider.network;
+
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId}`);
   }
 
+  const [isSingleSided, isToken1DefaultToken, strategy] = await Promise.all([
+    isStrategySingleSidedDeposit(chainId, strategyAddress),
+    isToken1DefaultTokenForStrategy(strategyAddress, jsonProvider),
+    getStrategyInfo(chainId, strategyAddress),
+  ]);
+
   const signer = jsonProvider.getSigner(accountAddress);
-  const strategy = await getStrategyInfo(chainId, strategyAddress);
+
   if (!strategy) throw new Error(`Strategy not found [${chainId}, ${strategyAddress}]`);
 
-  const token = strategy[tokenIdx === 0 ? 'token0' : 'token1'];
+  let token;
+  let depositAddress;
+
+  if (isSingleSided) {
+    const singleSidedWrapper = getConfig(
+      chainId,
+      'others',
+      'singleSidedWrapper',
+      strategy.type === DataFeed.Twap,
+      strategy.dex,
+    );
+
+    token = strategy[isToken1DefaultToken ? 'token1' : 'token0'];
+    depositAddress = singleSidedWrapper ?? strategyAddress;
+  } else {
+    token = strategy[tokenIdx === 0 ? 'token0' : 'token1'];
+    depositAddress = strategyAddress;
+  }
 
   const tokenContract = getERC20Contract(token.id, signer);
 
@@ -86,7 +164,7 @@ export async function approveStrategyToken(
     : MaxUint256;
 
   const gasLimit =
-    overrides?.gasLimit ?? calculateGasMargin(await tokenContract.estimateGas.approve(strategyAddress, amountBN));
+    overrides?.gasLimit ?? calculateGasMargin(await tokenContract.estimateGas.approve(depositAddress, amountBN));
 
   return tokenContract.approve(strategyAddress, amountBN, { gasLimit });
 }
@@ -115,14 +193,45 @@ export async function depositLP(
   _amount1Min: string = '0',
 ): Promise<ContractTransaction> {
   const { chainId } = jsonProvider.network;
+
   if (!Object.values(SupportedChainId).includes(chainId)) {
     throw new Error(`Unsupported chainId: ${chainId}`);
   }
+
+  const isSingleSided = await isStrategySingleSidedDeposit(chainId, strategyAddress);
+
   const signer = jsonProvider.getSigner(accountAddress);
-  const strategyContract = getStrategyContract(strategyAddress, signer);
   const strategy = await getStrategyInfo(chainId, strategyAddress);
 
   if (!strategy) throw new Error(`Strategy not found [${chainId}, ${strategyAddress}]`);
+
+  const singleSidedWrapper = getConfig(
+    chainId,
+    'others',
+    'singleSidedWrapper',
+    strategy.type === DataFeed.Twap,
+    strategy.dex,
+  );
+
+  if (isSingleSided && singleSidedWrapper) {
+    const isToken1DefaultToken = await isToken1DefaultTokenForStrategy(strategyAddress, jsonProvider);
+    const strategyContract = getSingleSidedStrategyContract(singleSidedWrapper, signer);
+    const amount = isToken1DefaultToken ? amount1 : amount0;
+
+    const params: Parameters<typeof strategyContract.deposit> = [
+      strategyAddress,
+      amount instanceof BigNumber ? amount : parseBigInt(amount, +strategy.token0.decimals),
+      0,
+    ];
+
+    const gasLimit = overrides?.gasLimit; // ?? calculateGasMargin(await strategyContract.estimateGas.mint(...params));
+
+    params[3] = { ...overrides, gasLimit };
+
+    return strategyContract.deposit(...params);
+  }
+
+  const strategyContract = getStrategyContract(strategyAddress, signer);
 
   // if (parseInt(strategy.token0.id, 16) > parseInt(strategy.token1.id, 16)) {
   //   // eslint-disable-next-line prefer-destructuring, no-param-reassign
@@ -136,8 +245,6 @@ export async function depositLP(
     parseBigInt(_amount1Min, +strategy.token1.decimals),
     0,
   ];
-
-  console.log('params', params);
 
   const gasLimit = overrides?.gasLimit; // ?? calculateGasMargin(await strategyContract.estimateGas.mint(...params));
 

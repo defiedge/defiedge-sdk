@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-unresolved
 import { gql, request } from 'graphql-request';
 
+import crossFetch, { Request } from 'cross-fetch';
 import { StrategyMetaQuery } from '../types/strategyMetaQuery';
 import { StrategyQueryData } from '../types/strategyQueryData';
 import { SupportedChainId } from '../types';
@@ -136,27 +137,27 @@ export function getStrategyMetaData(
       strategyAddress,
       network: Object.entries(SupportedChainId).find((e) => e[1] === chainId)![0],
     })
-    .then((e) => ({
-      ...e.strategy,
-      feesApr: { USD: e.strategy.fees_apr_usd },
-      sevenDayApy: { USD: e.strategy.seven_day_apy_usd },
-      sinceInception: { USD: e.strategy.since_inception_usd },
-      oneDayApy: { USD: e.strategy.one_day_apy_usd },
-    }))
-    .catch((e) => {
-      try {
-        const { strategy } = JSON.parse(e.response.error).data;
+      .then((e) => ({
+        ...e.strategy,
+        feesApr: { USD: e.strategy.fees_apr_usd },
+        sevenDayApy: { USD: e.strategy.seven_day_apy_usd },
+        sinceInception: { USD: e.strategy.since_inception_usd },
+        oneDayApy: { USD: e.strategy.one_day_apy_usd },
+      }))
+      .catch((e) => {
+        try {
+          const { strategy } = JSON.parse(e.response.error).data;
 
-        return {
-          ...strategy,
-          feesApr: { USD: strategy.fees_apr_usd },
-          sevenDayApy: { USD: strategy.seven_day_apy_usd },
-          sinceInception: { USD: strategy.since_inception_usd },
-          oneDayApy: { USD: strategy.one_day_apy_usd },
-        };
-      } catch {
-        throw e;
-      }
+          return {
+            ...strategy,
+            feesApr: { USD: strategy.fees_apr_usd },
+            sevenDayApy: { USD: strategy.seven_day_apy_usd },
+            sinceInception: { USD: strategy.since_inception_usd },
+            oneDayApy: { USD: strategy.one_day_apy_usd },
+          };
+        } catch {
+          throw e;
+        }
       }),
   );
 }
@@ -175,8 +176,16 @@ export function getStrategyInfo(
   return CACHE.getOrSet(
     `${chainId + strategyAddress}-info`,
     request<StrategyQueryData, { strategyAddress: string }>(urls[chainId], strategyQuery, {
-    strategyAddress,
+      strategyAddress,
     }).then(({ strategy }) => strategy),
+  );
+}
+
+export function getSSDStrategies(): Promise<Record<SupportedChainId, string[]>> {
+  return CACHE.getOrSet(
+    'ssw-strategies',
+    crossFetch(new Request(`${APP_URL}/single-sided-deposit-strategies`)).then((e) => e.json()),
+    TEN_MINUTES,
   );
 }
 

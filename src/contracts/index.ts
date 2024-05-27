@@ -7,9 +7,11 @@ import {
   Strategy__factory as StrategyFactory,
   ERC20__factory as ERC20Factory,
   ERC20,
+  SingleSidedWrapper__factory as SingleSidedWrapperFactory,
   LiquidityHelper__factory as LiquidityHelperFactory,
   Pool,
   Pool__factory as PoolFactory,
+  SingleSidedWrapper,
 } from '../../abis/types';
 
 /**
@@ -22,6 +24,11 @@ import {
 function getStrategyContract(address: string, signerOrProvider: SignerOrProvider): Strategy {
   getAddress(address);
   return StrategyFactory.connect(address, signerOrProvider);
+}
+
+function getSingleSidedStrategyContract(address: string, signerOrProvider: SignerOrProvider): SingleSidedWrapper {
+  getAddress(address);
+  return SingleSidedWrapperFactory.connect(address, signerOrProvider);
 }
 
 /**
@@ -75,9 +82,10 @@ function getPoolContract(address: string, signerOrProvider: SignerOrProvider): P
 }
 
 export {
-  getStrategyContract,
-  getLiquidityHelperContract,
   getERC20Contract,
+  getLiquidityHelperContract,
   getPoolContract,
+  getSingleSidedStrategyContract,
+  getStrategyContract,
   getStrategyManagerContract,
 };
