@@ -4,8 +4,7 @@ import { gql, request } from 'graphql-request';
 import { StrategyMetaQuery } from '../types/strategyMetaQuery';
 import { StrategyQueryData } from '../types/strategyQueryData';
 import { SupportedChainId } from '../types';
-
-const promises: Record<string, Promise<any>> = {};
+import CACHE, { TEN_MINUTES } from '../utils/Cache';
 
 const urls: Record<SupportedChainId, string> = {
   [SupportedChainId.arbitrum]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-arbitrum',
@@ -123,22 +122,18 @@ const strategyMetaQuery = gql`
  * @param {string} strategyAddress - The address of the strategy.
  * @return {Promise<StrategyMetaQuery['strategy']>} A promise that resolves to the strategy metadata.
  */
-export async function getStrategyMetaData(
+export function getStrategyMetaData(
   chainId: SupportedChainId,
   strategyAddress: string,
 ): Promise<StrategyMetaQuery['strategy']> {
   const key = `${chainId + strategyAddress}-meta`;
 
-  if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
-
-  promises[key] = request<StrategyMetaQuery, { strategyAddress: string; network: string }>(
-    `${APP_URL}/graphql`,
-    strategyMetaQuery,
-    {
+  return CACHE.getOrSet(
+    key,
+    request<StrategyMetaQuery, { strategyAddress: string; network: string }>(`${APP_URL}/graphql`, strategyMetaQuery, {
       strategyAddress,
       network: Object.entries(SupportedChainId).find((e) => e[1] === chainId)![0],
-    },
-  )
+    })
     .then((e) => ({
       ...e.strategy,
       feesApr: { USD: e.strategy.fees_apr_usd },
@@ -160,46 +155,46 @@ export async function getStrategyMetaData(
       } catch {
         throw e;
       }
-    })
-    .finally(() => setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */));
-
-  // eslint-disable-next-line no-return-await
-  return await promises[key];
+      }),
+  );
 }
 
-export async function getStrategyInfo(
+/**
+ * Retrieves the information of a strategy.
+ *
+ * @param {SupportedChainId} chainId - The chain ID of the strategy.
+ * @param {string} strategyAddress - The address of the strategy.
+ * @return {Promise<StrategyQueryData['strategy']>} A promise that resolves to the strategy information.
+ */
+export function getStrategyInfo(
   chainId: SupportedChainId,
   strategyAddress: string,
 ): Promise<StrategyQueryData['strategy']> {
-  const key = `${chainId + strategyAddress}-info`;
-
-  if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
-
-  promises[key] = request<StrategyQueryData, { strategyAddress: string }>(urls[chainId], strategyQuery, {
+  return CACHE.getOrSet(
+    `${chainId + strategyAddress}-info`,
+    request<StrategyQueryData, { strategyAddress: string }>(urls[chainId], strategyQuery, {
     strategyAddress,
-  })
-    .then(({ strategy }) => strategy)
-    .finally(() => setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */));
-
-  // eslint-disable-next-line no-return-await
-  return await promises[key];
+    }).then(({ strategy }) => strategy),
+  );
 }
 
-export async function getStrategyDetails(
+/**
+ * Retrieves the details of a strategy, including its information and metadata.
+ *
+ * @param {SupportedChainId} chainId - The chain ID of the strategy.
+ * @param {string} strategyAddress - The address of the strategy.
+ * @return {Promise<StrategyQueryData['strategy'] & StrategyMetaQuery>} A promise that resolves to the strategy details.
+ */
+export function getStrategyDetails(
   chainId: SupportedChainId,
   strategyAddress: string,
-): Promise<StrategyQueryData['strategy'] & StrategyMetaQuery> {
+): Promise<StrategyQueryData['strategy'] & StrategyMetaQuery['strategy']> {
   const key = `${chainId + strategyAddress}-both`;
 
-  if (Object.prototype.hasOwnProperty.call(promises, key)) return promises[key];
-
-  promises[key] = Promise.all([
-    getStrategyInfo(chainId, strategyAddress),
-    getStrategyMetaData(chainId, strategyAddress),
-  ])
-    .then(([a, b]) => ({ ...a, ...b }))
-    .finally(() => setTimeout(() => delete promises[key], 2 * 60 * 100 /* 2 mins */));
-
-  // eslint-disable-next-line no-return-await
-  return promises[key];
+  return CACHE.getOrSet(
+    key,
+    Promise.all([getStrategyInfo(chainId, strategyAddress), getStrategyMetaData(chainId, strategyAddress)]).then(
+      ([a, b]) => ({ ...a, ...b }),
+    ),
+  );
 }
