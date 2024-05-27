@@ -11,11 +11,13 @@ const urls: Record<SupportedChainId, string> = {
   [SupportedChainId.avalanche]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-avalanche',
   [SupportedChainId.base]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-base',
   [SupportedChainId.bsc]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-bsc',
+  [SupportedChainId.linea]: 'https://api.studio.thegraph.com/query/58813/defiedge-linea/version/latest',
   [SupportedChainId.mainnet]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-mainnet',
   [SupportedChainId.mantle]: 'https://graph.fusionx.finance/subgraphs/name/unbound-finance/mantle-staging',
   [SupportedChainId.moonbeam]: 'https://api.thegraph.com/subgraphs/name/unbound-finance/moonbeam-staging',
   [SupportedChainId.optimism]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-optimism',
   [SupportedChainId.polygon]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-polygon',
+  [SupportedChainId.xLayer]: 'https://api.studio.thegraph.com/query/58813/defiedge-xlayer/version/latest',
   [SupportedChainId.zkEVM]: 'https://api.studio.thegraph.com/query/58813/defiedge-zkevm/version/latest',
   [SupportedChainId.zksyncEra]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-zksync-era',
 };

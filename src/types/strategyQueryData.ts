@@ -55,6 +55,7 @@ export enum Dex {
   Camelot = 'Camelot',
   Fusionx = 'Fusionx',
   Horiza = 'Horiza',
+  Lynex = 'Lynex',
   Pancakeswap = 'Pancakeswap',
   Pangolin = 'Pangolin',
   Quickswap = 'Quickswap',

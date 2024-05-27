@@ -31,22 +31,23 @@ const DEFAULT_REGISTRY: Record<SupportedChainId, string> = {
   // [SupportedChainId.MOONRIVER_MAINNET]: 'https://rpc.moonriver.moonbeam.SupportedChainId',
   // [SupportedChainId.CRONOS_MAINNET]: 'https://evm-cronos.crypto.org',
   // [SupportedChainId.AURORA_MAINNET]: 'https://mainnet.aurora.dev',
-  // [SupportedChainId.EVMOS_MAINNET]: 'https://eth.bd.evmos.org:8545',
   [SupportedChainId.arbitrum]: 'https://arb1.arbitrum.io/rpc',
   [SupportedChainId.avalanche]: 'https://avalanche.public-rpc.com',
   [SupportedChainId.base]: 'https://base.llamarpc.com',
   [SupportedChainId.bsc]: 'https://bsc-dataseed.binance.org/',
+  [SupportedChainId.linea]: 'https://1rpc.io/linea	',
   [SupportedChainId.mainnet]: 'https://eth-mainnet-public.unifra.io',
   [SupportedChainId.mantle]: 'https://1rpc.io/mantle',
   [SupportedChainId.moonbeam]: 'https://endpoints.omniatech.io/v1/moonbeam/mainnet/public',
   [SupportedChainId.optimism]: 'https://mainnet.optimism.io',
   [SupportedChainId.polygon]: 'https://polygon-rpc.com',
+  [SupportedChainId.xLayer]: 'https://rpc.xlayer.tech',
   [SupportedChainId.zkEVM]: 'https://1rpc.io/polygon/zkevm',
   [SupportedChainId.zksyncEra]: 'https://1rpc.io/zksync2-era',
 };
 
 const strategy = {
-  address: '0x6f72aa5e1b42f0d091ba6c2b9fe3e326a3df6160',
+  address: '0x652Fb15f3188a50f793A1F2F60796A40dE48bA49',
   chainId: SupportedChainId.arbitrum,
   name: 'arbitrum',
 };
@@ -54,7 +55,7 @@ const strategy = {
 const hdWalletProvider = new HDWalletProvider([process.env.PRIVATE_KEY!], DEFAULT_REGISTRY[strategy.chainId], 0, 1);
 
 const provider = new Web3Provider(hdWalletProvider, { chainId: strategy.chainId, name: strategy.name });
-const account = process.env.ACCOUNT!;
+const account = '0xa6e0E2a242240d09D14De787FfE00C71E34fBE6E'; // process.env.ACCOUNT!;
 
 const iface = new ethers.utils.Interface(STRATEGY_ABI);
 const amount0 = 0;
