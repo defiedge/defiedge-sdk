@@ -1,6 +1,7 @@
 import { SupportedChainId } from '../../types';
 import { DataFeed, Dex } from '../../types/strategyQueryData';
-import addressConfig, { AddressConfig, Addresses, Config } from './addresses';
+import addressConfig from './addresses';
+import { AddressConfig, Addresses, Config } from './addresses.imports';
 
 /**
  * Retrieves the configuration value based on the provided parameters.
