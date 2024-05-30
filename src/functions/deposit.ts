@@ -17,7 +17,7 @@ export async function isStrategySingleSidedDeposit(
 ): Promise<boolean> {
   const ssdStrategies = await getSSDStrategies();
 
-  return ssdStrategies[chainId].includes(strategyAddress.toLocaleLowerCase());
+  return !!ssdStrategies[chainId]?.map((s) => s.toLowerCase()).includes(strategyAddress.toLowerCase());
 }
 
 export async function isToken1DefaultTokenForStrategy(strategyAddress: string, jsonProvider: JsonRpcProvider) {
@@ -166,7 +166,7 @@ export async function approveStrategyToken(
   const gasLimit =
     overrides?.gasLimit ?? calculateGasMargin(await tokenContract.estimateGas.approve(depositAddress, amountBN));
 
-  return tokenContract.approve(strategyAddress, amountBN, { gasLimit });
+  return tokenContract.approve(depositAddress, amountBN, { gasLimit });
 }
 
 /**
