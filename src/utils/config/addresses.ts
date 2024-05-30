@@ -432,48 +432,48 @@ const addressConfig: Record<ChainId, Config> = {
     },
     others: { linkToken: '' },
   },
-  [ChainId.mantle]: {
-    defiEdge: {
-      factoryAddress: {
-        default: '',
-        twap: '',
-        [Dex.Fusionx]: {
-          default: '0x5015422641C162221fa35bBB60bb13C744f7aC7A',
-          twap: '0x95b0575c803e5eEC7b3c37338817822659A6ac84',
-        },
-      },
-      oracleAddress: {
-        default: '',
-        twap: '',
-        [Dex.Fusionx]: {
-          default: '0xd0e1596eaf70421141d56E0E720e44821Ac06dAF',
-          twap: '0xA093729b392fE82b5fA6fC7f54E6a6C33ca3C250',
-        },
-      },
-      chainLinkRegistryAddress: '0xA2aa501b19aff244D90cc15a4Cf739D2725B5729',
-      liquidityHelperAddress: {
-        default: '',
-        twap: '',
-        [Dex.Fusionx]: {
-          default: '0x2b857BFedAF65C8422663e5c6E4fe12a6FE4853A',
-          twap: '0x2b857BFedAF65C8422663e5c6E4fe12a6FE4853A',
-        },
-      },
-      swapProxy: {
-        default: '',
-        twap: '',
-        [Dex.Fusionx]: {
-          default: '0x10129AE6Bbb29DE424733ee17dE08aE28A58C64A',
-          twap: '0xEDAd36f5Ee536F032b5AC03B3C535454E1E6D376',
-        },
-      },
-      quoter: '0x90f72244294E7c5028aFd6a96E18CC2c1E913995',
-      positionKeyHelper: '0x876cCF15555DA67510707c751EbcAC65cee48Bbb',
-    },
-    limitOrderGelato: { resolverFactoryAddress: '' },
-    limitOrderKeeper: { resolverFactoryAddress: '' },
-    others: { linkToken: '' },
-  },
+  // [ChainId.mantle]: {
+  //   defiEdge: {
+  //     factoryAddress: {
+  //       default: '',
+  //       twap: '',
+  //       [Dex.Fusionx]: {
+  //         default: '0x5015422641C162221fa35bBB60bb13C744f7aC7A',
+  //         twap: '0x95b0575c803e5eEC7b3c37338817822659A6ac84',
+  //       },
+  //     },
+  //     oracleAddress: {
+  //       default: '',
+  //       twap: '',
+  //       [Dex.Fusionx]: {
+  //         default: '0xd0e1596eaf70421141d56E0E720e44821Ac06dAF',
+  //         twap: '0xA093729b392fE82b5fA6fC7f54E6a6C33ca3C250',
+  //       },
+  //     },
+  //     chainLinkRegistryAddress: '0xA2aa501b19aff244D90cc15a4Cf739D2725B5729',
+  //     liquidityHelperAddress: {
+  //       default: '',
+  //       twap: '',
+  //       [Dex.Fusionx]: {
+  //         default: '0x2b857BFedAF65C8422663e5c6E4fe12a6FE4853A',
+  //         twap: '0x2b857BFedAF65C8422663e5c6E4fe12a6FE4853A',
+  //       },
+  //     },
+  //     swapProxy: {
+  //       default: '',
+  //       twap: '',
+  //       [Dex.Fusionx]: {
+  //         default: '0x10129AE6Bbb29DE424733ee17dE08aE28A58C64A',
+  //         twap: '0xEDAd36f5Ee536F032b5AC03B3C535454E1E6D376',
+  //       },
+  //     },
+  //     quoter: '0x90f72244294E7c5028aFd6a96E18CC2c1E913995',
+  //     positionKeyHelper: '0x876cCF15555DA67510707c751EbcAC65cee48Bbb',
+  //   },
+  //   limitOrderGelato: { resolverFactoryAddress: '' },
+  //   limitOrderKeeper: { resolverFactoryAddress: '' },
+  //   others: { linkToken: '' },
+  // },
   [ChainId.base]: {
     defiEdge: {
       factoryAddress: {

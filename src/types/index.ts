@@ -10,7 +10,7 @@ export enum SupportedChainId {
   bsc = 56,
   linea = 59144,
   mainnet = 1,
-  mantle = 5000,
+  // mantle = 5000,
   moonbeam = 1284,
   optimism = 10,
   polygon = 137,

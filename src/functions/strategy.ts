@@ -14,7 +14,7 @@ const urls: Record<SupportedChainId, string> = {
   [SupportedChainId.bsc]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-bsc',
   [SupportedChainId.linea]: 'https://api.studio.thegraph.com/query/58813/defiedge-linea/version/latest',
   [SupportedChainId.mainnet]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-mainnet',
-  [SupportedChainId.mantle]: 'https://graph.fusionx.finance/subgraphs/name/unbound-finance/mantle-staging',
+  // [SupportedChainId.mantle]: 'https://graph.fusionx.finance/subgraphs/name/unbound-finance/mantle-staging',
   [SupportedChainId.moonbeam]: 'https://api.thegraph.com/subgraphs/name/unbound-finance/moonbeam-staging',
   [SupportedChainId.optimism]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-optimism',
   [SupportedChainId.polygon]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-polygon',
@@ -181,11 +181,13 @@ export function getStrategyInfo(
   );
 }
 
-export function getSSDStrategies(): Promise<Record<SupportedChainId, string[]>> {
+export function getSSDStrategies(): Promise<Partial<Record<SupportedChainId, string[]>>> {
   return CACHE.getOrSet(
     'ssw-strategies',
-    crossFetch(new Request(`${APP_URL}/single-sided-deposit-strategies`)).then((e) => e.json()),
-    TEN_MINUTES,
+    crossFetch(new Request(`${APP_URL}/single-sided-deposit-strategies`))
+      .then((e) => e.json())
+      .then((e) => e.data),
+    3 * TEN_MINUTES,
   );
 }
 

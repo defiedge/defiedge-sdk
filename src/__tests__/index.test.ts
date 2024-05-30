@@ -37,7 +37,7 @@ const DEFAULT_REGISTRY: Record<SupportedChainId, string> = {
   [SupportedChainId.bsc]: 'https://bsc-dataseed.binance.org/',
   [SupportedChainId.linea]: 'https://1rpc.io/linea	',
   [SupportedChainId.mainnet]: 'https://eth-mainnet-public.unifra.io',
-  [SupportedChainId.mantle]: 'https://1rpc.io/mantle',
+  // [SupportedChainId.mantle]: 'https://1rpc.io/mantle',
   [SupportedChainId.moonbeam]: 'https://endpoints.omniatech.io/v1/moonbeam/mainnet/public',
   [SupportedChainId.optimism]: 'https://mainnet.optimism.io',
   [SupportedChainId.polygon]: 'https://polygon-rpc.com',
