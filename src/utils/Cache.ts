@@ -1,9 +1,9 @@
 type FunctionLike<K> = (() => K) | K;
 
 const TEN_MINUTES = 10 * 60 * 1000;
-const TWO_MINUTES = 2 * 60 * 1000;
+const FIVE_MINUTES = 5 * 60 * 1000;
 
-const DEFAULT_DURATION = TWO_MINUTES;
+const DEFAULT_DURATION = FIVE_MINUTES;
 
 class CacheStorage {
   private cache: Map<
@@ -50,5 +50,5 @@ class CacheStorage {
 
 const CACHE = new CacheStorage();
 
-export { TEN_MINUTES, TWO_MINUTES };
+export { TEN_MINUTES, FIVE_MINUTES as TWO_MINUTES };
 export default CACHE;
