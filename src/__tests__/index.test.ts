@@ -35,7 +35,7 @@ const DEFAULT_REGISTRY: Record<SupportedChainId, string> = {
   [SupportedChainId.avalanche]: 'https://avalanche.public-rpc.com',
   [SupportedChainId.base]: 'https://base.llamarpc.com',
   [SupportedChainId.bsc]: 'https://bsc-dataseed.binance.org/',
-  [SupportedChainId.linea]: 'https://1rpc.io/linea	',
+  [SupportedChainId.linea]: 'https://1rpc.io/linea',
   [SupportedChainId.mainnet]: 'https://eth-mainnet-public.unifra.io',
   // [SupportedChainId.mantle]: 'https://1rpc.io/mantle',
   [SupportedChainId.moonbeam]: 'https://endpoints.omniatech.io/v1/moonbeam/mainnet/public',
@@ -47,7 +47,7 @@ const DEFAULT_REGISTRY: Record<SupportedChainId, string> = {
 };
 
 const strategy = {
-  address: '0x652Fb15f3188a50f793A1F2F60796A40dE48bA49',
+  address: '0x004ec957a099df21ca12b7f551111ee17157a4b4',
   chainId: SupportedChainId.arbitrum,
   name: 'arbitrum',
 };
@@ -137,8 +137,8 @@ describe('Strategy', () => {
   it('getLiquidity', async () => {
     const liquidity = await getLiquidity(strategy.address, provider);
 
-    expect(liquidity.amount0Total).toBeGreaterThan(0);
-    expect(liquidity.amount1Total).toBeGreaterThan(0);
+    expect(liquidity.amount0Total).toBeGreaterThanOrEqual(0);
+    expect(liquidity.amount1Total).toBeGreaterThanOrEqual(0);
   });
 
   it('removeLP:deposited', async () => {

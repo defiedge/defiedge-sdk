@@ -8,19 +8,19 @@ import { SupportedChainId } from '../types';
 import CACHE, { TEN_MINUTES } from '../utils/Cache';
 
 const urls: Record<SupportedChainId, string> = {
-  [SupportedChainId.arbitrum]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-arbitrum',
-  [SupportedChainId.avalanche]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-avalanche',
-  [SupportedChainId.base]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-base',
-  [SupportedChainId.bsc]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-bsc',
+  [SupportedChainId.arbitrum]: 'https://api.studio.thegraph.com/query/58813/defiedge-arbitrum/version/latest',
+  [SupportedChainId.avalanche]: 'https://api.studio.thegraph.com/query/58813/defiedge-avalanche/version/latest',
+  [SupportedChainId.base]: 'https://api.studio.thegraph.com/query/58813/defiedge-base/version/latest',
+  [SupportedChainId.bsc]: 'https://api.studio.thegraph.com/query/58813/defiedge-bsc/version/latest',
   [SupportedChainId.linea]: 'https://api.studio.thegraph.com/query/58813/defiedge-linea/version/latest',
-  [SupportedChainId.mainnet]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-mainnet',
+  [SupportedChainId.mainnet]: 'https://api.studio.thegraph.com/query/58813/defiedge-mainnet/version/latest',
   // [SupportedChainId.mantle]: 'https://graph.fusionx.finance/subgraphs/name/unbound-finance/mantle-staging',
   [SupportedChainId.moonbeam]: 'https://api.thegraph.com/subgraphs/name/unbound-finance/moonbeam-staging',
-  [SupportedChainId.optimism]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-optimism',
-  [SupportedChainId.polygon]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-polygon',
+  [SupportedChainId.optimism]: 'https://api.studio.thegraph.com/query/58813/defiedge-optimism/version/latest',
+  [SupportedChainId.polygon]: 'https://api.studio.thegraph.com/query/58813/defiedge-polygon/version/latest',
   [SupportedChainId.xLayer]: 'https://api.studio.thegraph.com/query/58813/defiedge-xlayer/version/latest',
   [SupportedChainId.zkEVM]: 'https://api.studio.thegraph.com/query/58813/defiedge-zkevm/version/latest',
-  [SupportedChainId.zksyncEra]: 'https://api.thegraph.com/subgraphs/name/defiedge/defiedge-zksync-era',
+  [SupportedChainId.zksyncEra]: 'https://api.studio.thegraph.com/query/58813/defiedge-zksync-era/version/latest',
 };
 
 const APP_URL = 'https://api.defiedge.io';
